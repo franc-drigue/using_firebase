@@ -3,14 +3,23 @@ import {
   TouchableOpacity, 
   Text, 
   View,
-  TextInput 
+  TextInput,
+  FlatList
 } from "react-native";
 import { Stack, Link } from 'expo-router';
 import { Button } from '~/components/Button';
 import { Container } from '~/components/Container';
 import { ScreenContent } from '~/components/ScreenContent';
 import { db } from "firebaseConfig";
-import {doc, getDoc, setDoc, collection, addDoc} from "firebase/firestore"
+import {doc, getDoc, setDoc, collection, addDoc, getDocs} from "firebase/firestore"
+import CardUsers from "~/components/CardUsers";
+
+type userType = {
+  id: string;
+  age: string;
+  city: string;
+  name: string
+}
 
 export default function Home() {
 
@@ -18,21 +27,46 @@ export default function Home() {
   const [age, setAge] = useState("");
   const [city, setCity] = useState("");
   const [isToggleForm, setIsToggleForm] = useState(true);
+  const [users, setUsers] = useState<userType[]>([])
 
   /**
    realizando conexão com o banco de dados
    assim que o app iniciar 
    E buscar o nome do usuário 1
   **/ 
-  /**useEffect(() => {
-    const docRef = doc(db, "users", "1");
+   const fetchUser = async () => {
+
+    if (name == "" && age == ""  && city == "") return
+
+    const userRef = collection(db, "users");
+
+    getDocs(userRef)
+    .then((users) => {
+      let lista:userType[] = []
+
+      users.forEach((user) => {
+        lista.push({
+          id: user.id,
+          age: user.data().age,
+          name: user.data().name,
+          city: user.data().city
+        })
+      })
+      setUsers(lista)
+    })
+  }
+
+  useEffect(() => {
+    /*const docRef = doc(db, "users", "1");
      
     getDoc(docRef).then((snapshot) => {
       setName(snapshot.data()?.name);
     }).catch((erro) => {
       console.log("Error:", erro);
-    });
-  }, []);**/
+    });*/
+
+    fetchUser()
+  }, []);
 
 
   /**
@@ -51,6 +85,8 @@ export default function Home() {
      }).catch((err) => {
        console.log("erro:", err);
      });
+
+     fetchUser()
 
      /**await setDoc(doc(db, "users", "4"), {
        age: "30",
@@ -110,6 +146,16 @@ export default function Home() {
              {isToggleForm ? "Desativar formulário" : "Ativar formulário"}
            </Text>
          </TouchableOpacity>
+         <View className="flex-shrink">
+           <Text className={styles.label}>Usuários:</Text>
+           <FlatList
+             showsVerticalScrollIndicator={false}
+             className={styles.flatListStyle}
+             data={users}
+             keyExtractor={(user) => user.id}
+             renderItem={({item}) => <CardUsers name={item.name}/>}
+           />
+          </View>
        </View> 
     </>
   );
@@ -125,4 +171,5 @@ const styles = {
   textButtonToggleDisable: `font-semibold`,
   toggleFormEnable: `bg-green-700 w-[150px] p-[5px] justify-center items-center rounded-lg self-end`,
   textButtonToggleEnable: `font-semibold text-white`,
+  flatListStyle: `bg-[#F8F8FF] px-[8px] rounded border border-[#D3D3D3]` 
 }
