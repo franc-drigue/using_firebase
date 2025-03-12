@@ -29,21 +29,16 @@ export default function Home() {
   const [isToggleForm, setIsToggleForm] = useState(true);
   const [users, setUsers] = useState<userType[]>([])
 
-  /**
-   realizando conexão com o banco de dados
-   assim que o app iniciar 
-   E buscar o nome do usuário 1
-  **/ 
-   const fetchUser = async () => {
 
-    if (name == "" && age == ""  && city == "") return
+   const fetchUser = async () => {
 
     const userRef = collection(db, "users");
 
     getDocs(userRef)
-    .then((users) => {
-      let lista:userType[] = []
+    .then((users) => { 
 
+      let lista:userType[] = []
+      
       users.forEach((user) => {
         lista.push({
           id: user.id,
@@ -53,6 +48,8 @@ export default function Home() {
         })
       })
       setUsers(lista)
+    }).catch((erro) => {
+        console.log("Erro ao buscar usuários", erro)
     })
   }
 
@@ -70,9 +67,12 @@ export default function Home() {
 
 
   /**
-   Realizar cadastro de um usuário 
+   Realizar cadastro de um usuário, e atualizar a lista com o novo usuário
    **/
   const handleRegister = async () => {
+
+    if (name == "" && age == ""  && city == "") return
+
      await addDoc(collection(db, "users",), {
        age: age,
        city: city,
