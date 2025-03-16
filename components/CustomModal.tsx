@@ -60,7 +60,7 @@ const style = {
     textInfo: `mb-[20px] text-[18px]`,
     labelTextInfo: `font-bold`,
     title: `mb-10 self-center text-[20px] font-bold mt-[20px]`,
-    containerButtonsModalDelete: `flex flex-row gap-2`,
+    containerButtonsModalDelete: `flex flex-row gap-2 justify-center`,
     containerModalDelete: `flex flex-1  justify-between py-[20px]`,
     buttonDelete: `bg-[#FF0000] w-[50%] p-[10px] items-center rounded-md`,
     textButton: `text-[#fff] font-bold`,
