@@ -11,10 +11,10 @@ import { Button } from '~/components/Button';
 import { Container } from '~/components/Container';
 import { ScreenContent } from '~/components/ScreenContent';
 import { db } from "firebaseConfig";
-import {doc, getDoc, setDoc, collection, addDoc, getDocs} from "firebase/firestore"
+import {doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc} from "firebase/firestore"
 import CardUsers from "~/components/CardUsers";
 
-type userType = {
+ type userType = {
   id: string;
   age: string;
   city: string;
@@ -53,23 +53,21 @@ export default function Home() {
     })
   }
 
-  useEffect(() => {
-    /*const docRef = doc(db, "users", "1");
-     
-    getDoc(docRef).then((snapshot) => {
-      setName(snapshot.data()?.name);
-    }).catch((erro) => {
-      console.log("Error:", erro);
-    });*/
-
-    fetchUser()
-  }, []);
-
-
+  const handleDeleteUser = async (id: string) => {
+        const userRef = doc(db, "users", id);
+        try {
+          await deleteDoc(userRef)
+          fetchUser()
+          console.log('Usuário deletado com sucesso!');
+        }catch (error) {
+          console.error('Erro ao deletar usuário: ', error);
+        }
+  }
+  
   /**
    Realizar cadastro de um usuário, e atualizar a lista com o novo usuário
    **/
-  const handleRegister = async () => {
+   const handleRegister = async () => {
 
     if (name == "" && age == ""  && city == "") return
 
@@ -99,10 +97,21 @@ export default function Home() {
     });**/
   }
 
-
   const handleToggleVisible = () => {
     setIsToggleForm(!isToggleForm);
   }
+
+  useEffect(() => {
+    /*const docRef = doc(db, "users", "1");
+     
+    getDoc(docRef).then((snapshot) => {
+      setName(snapshot.data()?.name);
+    }).catch((erro) => {
+      console.log("Error:", erro);
+    });*/
+    fetchUser()
+  }, []);
+
 
   return (
     <>
@@ -153,7 +162,13 @@ export default function Home() {
              className={styles.flatListStyle}
              data={users}
              keyExtractor={(user) => user.id}
-             renderItem={({item}) => <CardUsers name={item.name}/>}
+             renderItem={({item}) => 
+               <CardUsers 
+                 name={item.name} 
+                 city={item.city}
+                 age={item.age}
+                 handleDeleteUser={() => handleDeleteUser(item.id)}/>
+              }
            />
           </View>
        </View> 
@@ -168,7 +183,7 @@ const styles = {
   label: `font-semibold text-[18px] mb-[5px] mt-[15px]`,
   inputText: `border rounded border-gray-600 px-[10px] text-[16px]`,
   toggleFormDisable: `bg-red-500 w-[150px] p-[5px] justify-center items-center rounded-lg self-end`,
-  textButtonToggleDisable: `font-semibold`,
+  textButtonToggleDisable: `font-semibold text-[#fff]`,
   toggleFormEnable: `bg-green-700 w-[150px] p-[5px] justify-center items-center rounded-lg self-end`,
   textButtonToggleEnable: `font-semibold text-white`,
   flatListStyle: `bg-[#F8F8FF] px-[8px] rounded border border-[#D3D3D3]` 
