@@ -28,6 +28,7 @@ export default function Home() {
   const [city, setCity] = useState("");
   const [isToggleForm, setIsToggleForm] = useState(true);
   const [users, setUsers] = useState<userType[]>([])
+  const [msgAlert, setMsgAlert] = useState("")
 
 
    const fetchUser = async () => {
@@ -63,13 +64,17 @@ export default function Home() {
           console.error('Erro ao deletar usuário: ', error);
         }
   }
-  
+
+
   /**
    Realizar cadastro de um usuário, e atualizar a lista com o novo usuário
    **/
    const handleRegister = async () => {
 
-    if (name == "" && age == ""  && city == "") return
+    if (name == "" && age == ""  && city == "") {
+      setMsgAlert("Preenha o campo")
+      return
+    }
 
      await addDoc(collection(db, "users",), {
        age: age,
@@ -85,6 +90,7 @@ export default function Home() {
      });
 
      fetchUser()
+     setMsgAlert("")
 
      /**await setDoc(doc(db, "users", "4"), {
        age: "30",
@@ -99,6 +105,10 @@ export default function Home() {
 
   const handleToggleVisible = () => {
     setIsToggleForm(!isToggleForm);
+    setMsgAlert("")
+    setAge("")
+    setCity("")
+    setName("")
   }
 
   useEffect(() => {
@@ -127,15 +137,18 @@ export default function Home() {
             placeholder="Digite seu nome"
             className={styles.inputText}
            />
- 
+          <Text style={{color: "#FF0000",display: `${name.length != 0 ? "none" : msgAlert == "" ? "none" : "flex"}`}}>{msgAlert}</Text>
+
           <Text className={styles.label}>Idade:</Text>
           <TextInput
            value={age}
+           keyboardType="numeric"
            onChangeText={(text) => setAge(text)}
            placeholder="Digite sua idade"
            className={styles.inputText}
           />
- 
+          <Text style={{color: "#FF0000", display: `${age.length != 0 ? "none" : msgAlert == "" ? "none" : "flex"}`}}>{msgAlert}</Text>
+
           <Text className={styles.label}>Cidade:</Text>
           <TextInput
            value={city}
@@ -143,6 +156,8 @@ export default function Home() {
            placeholder="Digite o nome da sua cidade"
            className={styles.inputText}
           />
+          <Text style={{color: "#FF0000", display: `${city.length != 0 ? "none" : msgAlert == "" ? "none" : "flex"}`}}>{msgAlert}</Text>
+
           <TouchableOpacity className={styles.button} onPress={handleRegister}>
             <Text className={styles.textButton}>
               Enviar

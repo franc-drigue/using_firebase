@@ -20,11 +20,11 @@ export default function CustomModal({closeModal, age, city, name, modalDeleteUse
                 Realmente deseja apagar o usuário {name}?
             </Text>
             <View className={style.containerButtonsModalDelete}>
-              <TouchableOpacity onPress={closeModal} className={style.buttonCancel}>
-                <Text className={style.textButton}>Cancelar</Text>
+              <TouchableOpacity onPress={closeModal} className={style.buttonsDialog}>
+                <Text className={style.textButtonCancelar}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity className={style.buttonDelete} onPress={handleDeleteUser}>
-                <Text className={style.textButton}>Deletar</Text>
+              <TouchableOpacity className={style.buttonsDialog} onPress={handleDeleteUser}>
+                <Text className={style.textButtonDeletar}>Deletar</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -55,16 +55,16 @@ export default function CustomModal({closeModal, age, city, name, modalDeleteUse
 
 const style = {
     container: `flex flex-1 bg-[rgba(0,0,0,0.91)] items-center justify-center`,
-    conatinerInfoModal: `bg-[#fff] w-[70%] h-[40%] rounded-lg justify-center p-[15px]`,
-    buttonCloseModal: `absolute top-[-15px] right-[-5px]`,
+    conatinerInfoModal: `bg-[#F8F8FF] w-[70%] h-[40%] rounded-lg justify-center p-[15px]`,
+    buttonCloseModal: `self-end`,
     textInfo: `mb-[20px] text-[18px]`,
     labelTextInfo: `font-bold`,
-    title: `mb-10 self-center text-[20px] font-bold mt-[20px]`,
-    containerButtonsModalDelete: `flex flex-row gap-2 justify-center`,
+    title: `mb-10 self-center text-[20px] font-bold`,
+    containerButtonsModalDelete: `flex-row gap-2 justify-center`,
     containerModalDelete: `flex flex-1  justify-between py-[20px]`,
-    buttonDelete: `bg-[#FF0000] w-[50%] p-[10px] items-center rounded-md`,
-    textButton: `text-[#fff] font-bold`,
-    buttonCancel: `bg-[#00008B] w-[50%] p-[10px] items-center rounded-md`,
+    buttonsDialog: `w-[50%] p-[10px] items-center rounded-md border border-[#DCDCDC] bg-[#fff]`,
+    textButtonCancelar: `text-[#00008B] font-bold text-[16px]`,
+    textButtonDeletar: `font-bold text-[#FF0000] text-[16px]`,
     descriptionDeleteModal: `text-[18px] self-center text-center`,
     titleDeleteModal: `text-[20px] text-center font-bold`
 }
