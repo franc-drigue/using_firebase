@@ -8,7 +8,7 @@ type modalDeleteProps = userCardProps & {
    modalDeleteUser: boolean;
 }
 
-export default function CustomModal({closeModal, age, city, name, modalDeleteUser, handleDeleteUser}: modalDeleteProps) {
+export default function CustomModal({closeModal, age, city, name, modalDeleteUser, handleDeleteUser,closeForm}: modalDeleteProps) {
   return (
     <View className={style.container}>
       <View className={style.conatinerInfoModal}>
@@ -38,10 +38,10 @@ export default function CustomModal({closeModal, age, city, name, modalDeleteUse
              className={style.buttonCloseModal}/>
             <Text className={style.title}>Mais detalhes</Text>
             <Text className={style.textInfo}>
-                <Text className={style.labelTextInfo}>Nome:</Text> {name}
+                <Text className={style.labelTextInfo}>Nome:</Text> {name} 
             </Text>
             <Text className={style.textInfo}>
-                <Text className={style.labelTextInfo}>Idade:</Text> {age}
+                <Text className={style.labelTextInfo}>Idade:</Text> {age} {age == "1" ? "ano" : "anos"} 
             </Text>
             <Text className={style.textInfo}>
                 <Text className={style.labelTextInfo}>Cidade:</Text> {city}
@@ -54,7 +54,7 @@ export default function CustomModal({closeModal, age, city, name, modalDeleteUse
 }
 
 const style = {
-    container: `flex flex-1 bg-[rgba(0,0,0,0.91)] items-center justify-center`,
+    container: `flex flex-1 bg-[rgba(0,0,0,0.81)] items-center justify-center`,
     conatinerInfoModal: `bg-[#F8F8FF] w-[70%] h-[40%] rounded-lg justify-center p-[15px]`,
     buttonCloseModal: `self-end`,
     textInfo: `mb-[20px] text-[18px]`,

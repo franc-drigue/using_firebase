@@ -7,9 +7,6 @@ import {
   FlatList
 } from "react-native";
 import { Stack, Link } from 'expo-router';
-import { Button } from '~/components/Button';
-import { Container } from '~/components/Container';
-import { ScreenContent } from '~/components/ScreenContent';
 import { db } from "firebaseConfig";
 import {doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc} from "firebase/firestore"
 import CardUsers from "~/components/CardUsers";
@@ -71,7 +68,7 @@ export default function Home() {
    **/
    const handleRegister = async () => {
 
-    if (name == "" && age == ""  && city == "") {
+    if (name == "" || age == ""  || city == "") {
       setMsgAlert("Preenha o campo")
       return
     }
@@ -182,6 +179,7 @@ export default function Home() {
                  name={item.name} 
                  city={item.city}
                  age={item.age}
+                 closeForm={() => setIsToggleForm(false)}
                  handleDeleteUser={() => handleDeleteUser(item.id)}/>
               }
            />
