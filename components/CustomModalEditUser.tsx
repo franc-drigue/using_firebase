@@ -3,33 +3,33 @@ import {
     Text,
     TextInput,
     TouchableOpacity
-} from 'react-native'
-import React, {useState} from 'react'
-import {FontAwesome, MaterialIcons, Ionicons} from "@expo/vector-icons"
+} from 'react-native';
+import React, {useState} from 'react';
+import {FontAwesome, MaterialIcons, Ionicons} from "@expo/vector-icons";
 import { db } from "firebaseConfig";
-import {doc, setDoc} from "firebase/firestore"
+import {doc, setDoc} from "firebase/firestore";
 
 type modalEditUser = {
     name: string;
     age: string;
     city: string;
-    id: string
-    renderUserUpdate: () => void
+    id: string;
+    renderUserUpdate: () => void;
     closeModal: (closed: boolean) => void;
 }
 
 export default function CustomModalEditUser({closeModal, age, city, name, id, renderUserUpdate} :modalEditUser) {
 
-  const [nameEdit, setNameEdit] = useState(name)
-  const [cityEdit, setCityEdit] = useState(city)
-  const [ageEdit, setAgeEdit] = useState(age)
-  const [renderMsgInputEmpty, setRenderMsgInputEmpty] = useState("")
+  const [nameEdit, setNameEdit] = useState(name);
+  const [cityEdit, setCityEdit] = useState(city);
+  const [ageEdit, setAgeEdit] = useState(age);
+  const [renderMsgInputEmpty, setRenderMsgInputEmpty] = useState("");
   
 
   const updateUser = async (id: string) => {
 
     if(nameEdit == "" || ageEdit == "" || cityEdit == "") {
-      setRenderMsgInputEmpty("Preencha o campo")
+      setRenderMsgInputEmpty("Preencha o campo");
       return
     }else if(nameEdit === name && ageEdit === age && cityEdit === city){
       closeModal(false)
@@ -41,13 +41,13 @@ export default function CustomModalEditUser({closeModal, age, city, name, id, re
        city: cityEdit,
        name: nameEdit
      }).then(() => {
-       setAgeEdit("")
-       setCityEdit("")
-       setNameEdit("")
-       closeModal(false)
-       setRenderMsgInputEmpty("")
-       renderUserUpdate()
-       console.log("Cadastrado com sucesso");
+       setAgeEdit("");
+       setCityEdit("");
+       setNameEdit("");
+       closeModal(false);
+       setRenderMsgInputEmpty("");
+       renderUserUpdate();
+       console.log("Os dados do usuário foram alterados");
      }).catch((err) => {
       console.log("erro:", err);
     });
@@ -88,7 +88,7 @@ export default function CustomModalEditUser({closeModal, age, city, name, id, re
          <Text style={{color: "#FF0000",display: `${cityEdit.length != 0 ? "none" : renderMsgInputEmpty  == "" ? "none" : "flex"}`}}>{renderMsgInputEmpty}</Text>
 
         <TouchableOpacity className={styles.button} onPress={() => {
-          updateUser(id)
+          updateUser(id);
         }}>
             <Text className={styles.textButton}>
                 Enviar

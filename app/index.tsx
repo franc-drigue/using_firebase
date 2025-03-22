@@ -6,16 +6,24 @@ import {
   TextInput,
   FlatList
 } from "react-native";
-import { Stack, Link } from 'expo-router';
-import { db } from "firebaseConfig";
-import {doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc, onSnapshot} from "firebase/firestore"
+import {
+  doc, 
+  getDoc, 
+  setDoc, 
+  collection, 
+  addDoc, getDocs,
+  deleteDoc, 
+  onSnapshot
+} from "firebase/firestore";
 import CardUsers from "~/components/CardUsers";
+import { Stack } from 'expo-router';
+import { db } from "firebaseConfig";
 
  type userType = {
   id: string;
   age: string;
   city: string;
-  name: string
+  name: string;
 }
 
 export default function Home() {
@@ -24,8 +32,8 @@ export default function Home() {
   const [age, setAge] = useState("");
   const [city, setCity] = useState("");
   const [isToggleForm, setIsToggleForm] = useState(true);
-  const [users, setUsers] = useState<userType[]>([])
-  const [msgAlert, setMsgAlert] = useState("")
+  const [users, setUsers] = useState<userType[]>([]);
+  const [msgAlert, setMsgAlert] = useState("");
 
 
    const fetchUser = async () => {
@@ -35,7 +43,7 @@ export default function Home() {
     getDocs(userRef)
     .then((users) => { 
 
-      let lista:userType[] = []
+      let lista:userType[] = [];
       
       users.forEach((user) => {
         lista.push({
@@ -45,17 +53,18 @@ export default function Home() {
           city: user.data().city
         })
       })
+      
       setUsers(lista)
     }).catch((erro) => {
-        console.log("Erro ao buscar usuários", erro)
+        console.log("Erro ao buscar usuários", erro);
     })
   }
 
   const handleDeleteUser = async (id: string) => {
         const userRef = doc(db, "users", id);
         try {
-          await deleteDoc(userRef)
-          fetchUser()
+          await deleteDoc(userRef);
+          fetchUser();
           console.log('Usuário deletado com sucesso!');
         }catch (error) {
           console.error('Erro ao deletar usuário: ', error);
@@ -69,7 +78,7 @@ export default function Home() {
    const handleRegister = async () => {
 
     if (name == "" || age == ""  || city == "") {
-      setMsgAlert("Preenha o campo")
+      setMsgAlert("Preenha o campo");
       return
     }
 
@@ -86,8 +95,8 @@ export default function Home() {
        console.log("erro:", err);
      });
 
-     fetchUser()
-     setMsgAlert("")
+     fetchUser();
+     setMsgAlert("");
 
      /**await setDoc(doc(db, "users", "4"), {
        age: "30",
@@ -102,10 +111,10 @@ export default function Home() {
 
   const handleToggleVisible = () => {
     setIsToggleForm(!isToggleForm);
-    setMsgAlert("")
-    setAge("")
-    setCity("")
-    setName("")
+    setMsgAlert("");
+    setAge("");
+    setCity("");
+    setName("");
   }
 
   useEffect(() => {
@@ -116,13 +125,13 @@ export default function Home() {
     }).catch((erro) => {
       console.log("Error:", erro);
     });*/
-    fetchUser()
+    fetchUser();
   }, []);
 
 
   return (
     <>
-      <Stack.Screen options={{ title: '' }} />
+      <Stack.Screen options={{ title: `${isToggleForm ? "Cadastre um usuário" : ""}` }} />
       <View className={styles.container}>
         {
          isToggleForm && 

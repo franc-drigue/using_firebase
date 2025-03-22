@@ -1,4 +1,4 @@
-import {useState} from "react"
+import {useState} from "react";
 import {
     View,
     Text,
@@ -21,23 +21,23 @@ export interface userCardProps {
 
 export default function CardUsers({name, handleDeleteUser, city, age, closeForm, id, fetchUsers}: userCardProps) {
 
-   const [showModal, setShowModal] = useState(false)
-   const [isShowModalDeleteUser, setIsShowModalDeleteUser] = useState(false)
-   const [modalEditUser, setModalEditUser] = useState(false)
+   const [showModal, setShowModal] = useState(false);
+   const [isShowModalDeleteUser, setIsShowModalDeleteUser] = useState(false);
+   const [modalEditUser, setModalEditUser] = useState(false);
 
    const handleShowModalDeleteUser = () => {
-    setShowModal(true)
-    setIsShowModalDeleteUser(true)
+    setShowModal(true);
+    setIsShowModalDeleteUser(true);
    }
 
    const handleShowModalInfoUser = () => {
-      setShowModal(true)
-      setIsShowModalDeleteUser(false)
+      setShowModal(true);
+      setIsShowModalDeleteUser(false);
    }
 
    const handleShowModalEditUser = () => {
-     setModalEditUser(true)
-     closeForm()
+     setModalEditUser(true);
+     closeForm();
    }
 
     return(

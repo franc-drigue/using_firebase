@@ -1,14 +1,14 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
-import {MaterialIcons} from "@expo/vector-icons"
-import { userCardProps } from './CardUsers'
+import { View, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import {MaterialIcons} from "@expo/vector-icons";
+
 
 type modalDeleteProps = {
    closeModal: () => void;
    modalDeleteUser: boolean;
    age: string,
    city: string,
-   name: string
+   name: string;
    handleDeleteUser: () => void
 }
 
