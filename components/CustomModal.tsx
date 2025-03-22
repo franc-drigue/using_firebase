@@ -3,12 +3,16 @@ import React from 'react'
 import {MaterialIcons} from "@expo/vector-icons"
 import { userCardProps } from './CardUsers'
 
-type modalDeleteProps = userCardProps & {
+type modalDeleteProps = {
    closeModal: () => void;
    modalDeleteUser: boolean;
+   age: string,
+   city: string,
+   name: string
+   handleDeleteUser: () => void
 }
 
-export default function CustomModal({closeModal, age, city, name, modalDeleteUser, handleDeleteUser,closeForm}: modalDeleteProps) {
+export default function CustomModal({closeModal, age, city, name, modalDeleteUser, handleDeleteUser,}: modalDeleteProps) {
   return (
     <View className={style.container}>
       <View className={style.conatinerInfoModal}>

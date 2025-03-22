@@ -13,11 +13,13 @@ export interface userCardProps {
     name: string;
     city: string;
     age: string;
+    id: string;
+    fetchUsers: () => void;
     closeForm: () => void;
     handleDeleteUser: () => void;
 }
 
-export default function CardUsers({name, handleDeleteUser, city, age, closeForm}: userCardProps) {
+export default function CardUsers({name, handleDeleteUser, city, age, closeForm, id, fetchUsers}: userCardProps) {
 
    const [showModal, setShowModal] = useState(false)
    const [isShowModalDeleteUser, setIsShowModalDeleteUser] = useState(false)
@@ -61,13 +63,17 @@ export default function CardUsers({name, handleDeleteUser, city, age, closeForm}
                city={city}
                name={name}
                closeModal={() => setShowModal(false)}
-               closeForm={() => {}}
                handleDeleteUser={handleDeleteUser}
               />
            </Modal>
            <Modal visible={modalEditUser} transparent={true} animationType="slide">
                <CustomModalEditUser
-                closeModal={() => setModalEditUser(false)}
+                name={name}
+                age={age}
+                city={city}
+                id={id}
+                renderUserUpdate={fetchUsers}
+                closeModal={setModalEditUser}
                />
            </Modal>
         </View>

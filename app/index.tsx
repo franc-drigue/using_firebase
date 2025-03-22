@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Stack, Link } from 'expo-router';
 import { db } from "firebaseConfig";
-import {doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc} from "firebase/firestore"
+import {doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc, onSnapshot} from "firebase/firestore"
 import CardUsers from "~/components/CardUsers";
 
  type userType = {
@@ -179,6 +179,8 @@ export default function Home() {
                  name={item.name} 
                  city={item.city}
                  age={item.age}
+                 id={item.id}
+                 fetchUsers={() => fetchUser()}
                  closeForm={() => setIsToggleForm(false)}
                  handleDeleteUser={() => handleDeleteUser(item.id)}/>
               }
