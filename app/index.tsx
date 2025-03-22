@@ -183,15 +183,15 @@ export default function Home() {
              className={styles.flatListStyle}
              data={users}
              keyExtractor={(user) => user.id}
-             renderItem={({item}) => 
+             renderItem={({item: user}) => 
                <CardUsers 
-                 name={item.name} 
-                 city={item.city}
-                 age={item.age}
-                 id={item.id}
+                 name={user.name} 
+                 city={user.city}
+                 age={user.age}
+                 id={user.id}
                  fetchUsers={() => fetchUser()}
                  closeForm={() => setIsToggleForm(false)}
-                 handleDeleteUser={() => handleDeleteUser(item.id)}/>
+                 handleDeleteUser={() => handleDeleteUser(user.id)}/>
               }
            />
           </View>
