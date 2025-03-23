@@ -4,7 +4,8 @@ import {
   Text, 
   View,
   TextInput,
-  FlatList
+  FlatList,
+  ActivityIndicator
 } from "react-native";
 import {
   doc, 
@@ -34,10 +35,11 @@ export default function Home() {
   const [isToggleForm, setIsToggleForm] = useState(true);
   const [users, setUsers] = useState<userType[]>([]);
   const [msgAlert, setMsgAlert] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
 
    const fetchUser = async () => {
-
+    setIsLoading(true);
     const userRef = collection(db, "users");
 
     getDocs(userRef)
@@ -54,7 +56,8 @@ export default function Home() {
         })
       })
       
-      setUsers(lista)
+      setUsers(lista);
+      setIsLoading(false);
     }).catch((erro) => {
         console.log("Erro ao buscar usuários", erro);
     })
@@ -88,7 +91,7 @@ export default function Home() {
        name: name
      }).then(() => {
        setAge("");
-       setCity("")
+       setCity("");
        setName("");
        console.log("Cadastrado com sucesso");
      }).catch((err) => {
@@ -125,6 +128,7 @@ export default function Home() {
     }).catch((erro) => {
       console.log("Error:", erro);
     });*/
+
     fetchUser();
   }, []);
 
@@ -176,7 +180,13 @@ export default function Home() {
              {isToggleForm ? "Desativar formulário" : "Ativar formulário"}
            </Text>
          </TouchableOpacity>
-         <View className="flex-shrink">
+         {
+           isLoading ?
+           <View className="flex-1 justify-center">
+             <ActivityIndicator size={35}/>
+           </View>
+           :
+           <View className="flex-shrink">
            <Text className={styles.label}>Usuários:</Text>
            <FlatList
              showsVerticalScrollIndicator={false}
@@ -195,6 +205,7 @@ export default function Home() {
               }
            />
           </View>
+         }
        </View> 
     </>
   );
