@@ -5,221 +5,82 @@ import {
   View,
   TextInput,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard
 } from "react-native";
-import {
-  doc, 
-  getDoc, 
-  setDoc, 
-  collection, 
-  addDoc, getDocs,
-  deleteDoc, 
-  onSnapshot
-} from "firebase/firestore";
 import CardUsers from "~/components/CardUsers";
 import { Stack } from 'expo-router';
 import { db } from "firebaseConfig";
-
- type userType = {
-  id: string;
-  age: string;
-  city: string;
-  name: string;
-}
-
-export default function Home() {
-
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [city, setCity] = useState("");
-  const [isToggleForm, setIsToggleForm] = useState(true);
-  const [users, setUsers] = useState<userType[]>([]);
-  const [msgAlert, setMsgAlert] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+import {Link} from "expo-router"
+import { StatusBar } from "react-native";
+import {MaterialIcons} from "@expo/vector-icons"
 
 
-   const fetchUser = async () => {
-    setIsLoading(true);
-    const userRef = collection(db, "users");
+export default function Login() {
 
-    getDocs(userRef)
-    .then((users) => { 
+  const [isShowPassword, setIsShowPassword] = useState(true);
 
-      let lista:userType[] = [];
-      
-      users.forEach((user) => {
-        lista.push({
-          id: user.id,
-          age: user.data().age,
-          name: user.data().name,
-          city: user.data().city
-        })
-      })
-      
-      setUsers(lista);
-      setIsLoading(false);
-    }).catch((erro) => {
-        console.log("Erro ao buscar usuários", erro);
-    })
+  const handleShowPassword = () => {
+    setIsShowPassword(!isShowPassword)
   }
-
-  const handleDeleteUser = async (id: string) => {
-        const userRef = doc(db, "users", id);
-        try {
-          await deleteDoc(userRef);
-          fetchUser();
-          console.log('Usuário deletado com sucesso!');
-        }catch (error) {
-          console.error('Erro ao deletar usuário: ', error);
-        }
-  }
-
-
-  /**
-   Realizar cadastro de um usuário, e atualizar a lista com o novo usuário
-   **/
-   const handleRegister = async () => {
-
-    if (name == "" || age == ""  || city == "") {
-      setMsgAlert("Preenha o campo");
-      return
-    }
-
-     await addDoc(collection(db, "users",), {
-       age: age,
-       city: city,
-       name: name
-     }).then(() => {
-       setAge("");
-       setCity("");
-       setName("");
-       console.log("Cadastrado com sucesso");
-     }).catch((err) => {
-       console.log("erro:", err);
-     });
-
-     fetchUser();
-     setMsgAlert("");
-
-     /**await setDoc(doc(db, "users", "4"), {
-       age: "30",
-       city: "Porto Alegre",
-       name: "Franck"
-     }).then(() => {
-       console.log("Cadastrado com sucesso");
-     }).catch((err) => {
-      console.log("erro:", err);
-    });**/
-  }
-
-  const handleToggleVisible = () => {
-    setIsToggleForm(!isToggleForm);
-    setMsgAlert("");
-    setAge("");
-    setCity("");
-    setName("");
-  }
-
-  useEffect(() => {
-    /*const docRef = doc(db, "users", "1");
-     
-    getDoc(docRef).then((snapshot) => {
-      setName(snapshot.data()?.name);
-    }).catch((erro) => {
-      console.log("Error:", erro);
-    });*/
-
-    fetchUser();
-  }, []);
-
 
   return (
     <>
-      <Stack.Screen options={{ title: `${isToggleForm ? "Cadastre um usuário" : ""}` }} />
-      <View className={styles.container}>
-        {
-         isToggleForm && 
-         <View>
-           <Text className={styles.label}>Nome:</Text>
-           <TextInput
-            value={name}
-            onChangeText={(text) => setName(text)}
-            placeholder="Digite seu nome"
-            className={styles.inputText}
-           />
-          <Text style={{color: "#FF0000",display: `${name.length != 0 ? "none" : msgAlert == "" ? "none" : "flex"}`}}>{msgAlert}</Text>
-
-          <Text className={styles.label}>Idade:</Text>
-          <TextInput
-           value={age}
-           keyboardType="numeric"
-           onChangeText={(text) => setAge(text)}
-           placeholder="Digite sua idade"
-           className={styles.inputText}
-          />
-          <Text style={{color: "#FF0000", display: `${age.length != 0 ? "none" : msgAlert == "" ? "none" : "flex"}`}}>{msgAlert}</Text>
-
-          <Text className={styles.label}>Cidade:</Text>
-          <TextInput
-           value={city}
-           onChangeText={(text) => setCity(text)}
-           placeholder="Digite o nome da sua cidade"
-           className={styles.inputText}
-          />
-          <Text style={{color: "#FF0000", display: `${city.length != 0 ? "none" : msgAlert == "" ? "none" : "flex"}`}}>{msgAlert}</Text>
-
-          <TouchableOpacity className={styles.button} onPress={handleRegister}>
-            <Text className={styles.textButton}>
-              Enviar
-            </Text>
-          </TouchableOpacity>
-        </View>
-        }
-          <TouchableOpacity className={isToggleForm ? styles.toggleFormDisable : styles.toggleFormEnable} onPress={handleToggleVisible}>
-           <Text className={isToggleForm ? styles.textButtonToggleDisable: styles.textButtonToggleEnable}>
-             {isToggleForm ? "Desativar formulário" : "Ativar formulário"}
-           </Text>
-         </TouchableOpacity>
-         {
-           isLoading ?
-           <View className="flex-1 justify-center">
-             <ActivityIndicator size={35}/>
-           </View>
-           :
-           <View className="flex-shrink">
-           <Text className={styles.label}>Usuários:</Text>
-           <FlatList
-             showsVerticalScrollIndicator={false}
-             className={styles.flatListStyle}
-             data={users}
-             keyExtractor={(user) => user.id}
-             renderItem={({item: user}) => 
-               <CardUsers 
-                 name={user.name} 
-                 city={user.city}
-                 age={user.age}
-                 id={user.id}
-                 fetchUsers={() => fetchUser()}
-                 closeForm={() => setIsToggleForm(false)}
-                 handleDeleteUser={() => handleDeleteUser(user.id)}/>
-              }
-           />
+     <StatusBar barStyle="light-content" backgroundColor="#1C1C1C" />
+     <KeyboardAvoidingView 
+     className={styles.container}
+     behavior={Platform.OS === "ios" ? "padding" : "height"}
+     >
+        <View className={styles.containerHeader}>
+          <Text className={styles.title}>Faça o login</Text>
+          <View>
+            <Text className={styles.subTitleOne}>Acesse os usuários cadastrados</Text>
+            <View className="flex-row">
+              <Text className={styles.subTiTleTwo}>e administre-os com facilidade!</Text>
+              <MaterialIcons name="emoji-objects" color={"#fff"} size={20}/>
+            </View>
           </View>
-         }
-       </View> 
+        </View>
+        <View className={styles.containerForm}>
+            <Text>Email:</Text>
+            <TextInput
+             className={styles.textInput}
+             placeholder="Digite seu email"
+            />
+
+            <Text>Senha:</Text>
+            <View className={styles.containerInputPassword}>
+              <TextInput
+                className={styles.textInputPassword}
+                placeholder="Informe sua senha"
+                secureTextEntry={isShowPassword}
+               />
+              <TouchableOpacity onPress={handleShowPassword}>
+                <MaterialIcons name={isShowPassword ? "visibility-off" : "visibility"} size={25}/>
+              </TouchableOpacity>
+            </View>
+              <Link href="/home" className={styles.button}>
+                Entrar
+              </Link>
+        </View> 
+     </KeyboardAvoidingView> 
     </>
   );
 }
 
 const styles = {
-  button: `bg-[#000] mb-[20px] justify-center items-center py-[10px] rounded rounded-lg mt-[20px]`,
-  textButton: `text-[#fff] text-[18px]`,
-  container: `flex-1 p-[10px]`,
-  label: `font-semibold text-[18px] mb-[5px] mt-[15px]`,
-  inputText: `border rounded border-gray-600 px-[10px] text-[16px]`,
-  toggleFormDisable: `bg-red-500 w-[150px] p-[5px] justify-center items-center rounded-lg self-end`,
-  textButtonToggleDisable: `font-semibold text-[#fff]`,
-  toggleFormEnable: `bg-green-700 w-[150px] p-[5px] justify-center items-center rounded-lg self-end`,
-  textButtonToggleEnable: `font-semibold text-white`,
-  flatListStyle: `bg-[#F8F8FF] px-[8px] rounded border border-[#D3D3D3]` 
+  container: `flex-1 bg-[#1C1C1C]`,
+  containerForm: `flex-1 bg-[#fff] rounded rounded-s-3xl px-[20px] pt-[50px] mt-[25px]`,
+  title: `text-[30px] color-[#fff] font-bold mb-[30px]`,
+  containerHeader: `px-[20px] pt-[40px]`,
+  subTitleOne: `text-[19px] color-[#00BFFF]`,
+  subTiTleTwo: `color-[#87CEFA] text-[17px] me-[5px]`,
+  textInput: `border-b-[1px] border-[#4F4F4F] mb-[30px]`,
+  textInputPassword: `flex-1`,
+  button: `bg-[#000] mb-[20px] justify-center items-center py-[10px] rounded rounded-lg color-[#fff] text-center text-[18px]`,
+  containerInputPassword: `flex-row border-b-[1px] border-[#4F4F4F] mb-[30px] items-center`
 }
