@@ -11,15 +11,27 @@ import { db, auth } from "firebaseConfig";
 import {createUserWithEmailAndPassword} from "firebase/auth"
 import {Link} from "expo-router"
 import { StatusBar } from "react-native";
-import {MaterialIcons} from "@expo/vector-icons"
+import {MaterialIcons, Fontisto} from "@expo/vector-icons"
 
 
-export default function Login() {
+export default function Register() {
 
   const [isShowPassword, setIsShowPassword] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleShowPassword = () => {
     setIsShowPassword(!isShowPassword)
+  }
+
+  const handleCreateUser = () => {
+     createUserWithEmailAndPassword(auth, email, password)
+     .then((user) => {
+        console.log(user)
+     })
+     .catch((err) => {
+        console.log(err)
+     })
   }
 
   return (
@@ -30,18 +42,20 @@ export default function Login() {
      behavior={Platform.OS === "ios" ? "padding" : "height"}
      >
         <View className={styles.containerHeader}>
-          <Text className={styles.title}>Faça o login</Text>
+          <Text className={styles.title}>Realize seu cadastro</Text>
           <View>
-            <Text className={styles.subTitleOne}>Acesse os usuários cadastrados</Text>
+            <Text className={styles.subTitleOne}>Crie uma conta e acesse</Text>
             <View className="flex-row">
-              <Text className={styles.subTiTleTwo}>e administre-os com facilidade!</Text>
-              <MaterialIcons name="emoji-objects" color={"#fff"} size={20}/>
+              <Text className={styles.subTiTleTwo}>cadastre e veja detalhes dos usuários</Text>
+              <MaterialIcons name="anchor" color={"#fff"} size={20}/>
             </View>
           </View>
         </View>
         <View className={styles.containerForm}>
             <Text>Email:</Text>
             <TextInput
+             value={email}
+             onChangeText={(text) => setEmail(text)}
              className={styles.textInput}
              placeholder="Digite seu email"
             />
@@ -49,6 +63,8 @@ export default function Login() {
             <Text>Senha:</Text>
             <View className={styles.containerInputPassword}>
               <TextInput
+                value={password}
+                onChangeText={(text) => setPassword(text)}
                 className={styles.textInputPassword}
                 placeholder="Informe sua senha"
                 secureTextEntry={isShowPassword}
@@ -57,11 +73,9 @@ export default function Login() {
                 <MaterialIcons name={isShowPassword ? "visibility-off" : "visibility"} size={25}/>
               </TouchableOpacity>
             </View>
-              <Link href="/home" className={styles.button}>
-                Entrar
-              </Link>
-
-              <Link href="/register" className="self-end color-blue-600">Não tem um cadastro? cadastre-se.</Link>
+              <TouchableOpacity className={styles.button} onPress={handleCreateUser}>
+                <Text className={styles.textButton}>Cadastrar</Text>
+              </TouchableOpacity>
         </View> 
      </KeyboardAvoidingView> 
     </>
@@ -78,5 +92,6 @@ const styles = {
   textInput: `border-b-[1px] border-[#4F4F4F] mb-[30px]`,
   textInputPassword: `flex-1`,
   button: `bg-[#000] mb-[20px] justify-center items-center py-[10px] rounded rounded-lg color-[#fff] text-center text-[18px]`,
-  containerInputPassword: `flex-row border-b-[1px] border-[#4F4F4F] mb-[30px] items-center`
+  containerInputPassword: `flex-row border-b-[1px] border-[#4F4F4F] mb-[30px] items-center`,
+  textButton: `text-[#fff] text-[18px]`,
 }
