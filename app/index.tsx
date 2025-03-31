@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useState} from "react";
 import { 
   TouchableOpacity, 
   Text, 
@@ -8,18 +8,33 @@ import {
   Platform,
 } from "react-native";
 import { db, auth } from "firebaseConfig";
-import {createUserWithEmailAndPassword} from "firebase/auth"
-import {Link} from "expo-router"
+import {signInWithEmailAndPassword} from "firebase/auth";
+import {Link} from "expo-router";
 import { StatusBar } from "react-native";
-import {MaterialIcons} from "@expo/vector-icons"
+import {MaterialIcons} from "@expo/vector-icons";
 
 
 export default function Login() {
 
   const [isShowPassword, setIsShowPassword] = useState(true);
+  const [msgInputEmpty, setMsgInputEmpty] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleShowPassword = () => {
-    setIsShowPassword(!isShowPassword)
+    setIsShowPassword(!isShowPassword);
+  }
+
+  const handleLogin = () => {
+    if(email == "" || password == "") {
+      setMsgInputEmpty("Preencha o campo");
+      return
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      console.log(userCredential);
+    })
   }
 
   return (
@@ -42,13 +57,18 @@ export default function Login() {
         <View className={styles.containerForm}>
             <Text>Email:</Text>
             <TextInput
+             value={email}
+             onChangeText={(text) => setEmail(text)}
              className={styles.textInput}
              placeholder="Digite seu email"
             />
+            <Text style={{display: `${email.length != 0 ? "none" : msgInputEmpty == "" ? "none" : "flex" }`, color: "#FF0000"}}>{msgInputEmpty}</Text>
 
-            <Text>Senha:</Text>
+            <Text className="mt-[15px]">Senha:</Text>
             <View className={styles.containerInputPassword}>
               <TextInput
+                value={password}
+                onChangeText={(text) => setPassword(text)}
                 className={styles.textInputPassword}
                 placeholder="Informe sua senha"
                 secureTextEntry={isShowPassword}
@@ -57,11 +77,12 @@ export default function Login() {
                 <MaterialIcons name={isShowPassword ? "visibility-off" : "visibility"} size={25}/>
               </TouchableOpacity>
             </View>
-              <Link href="/home" className={styles.button}>
+            <Text style={{display: `${password.length != 0 ? "none" : msgInputEmpty == "" ? "none" : "flex" }`, color: "#FF0000"}}>{msgInputEmpty}</Text>
+              <Link href="/" className={styles.button} onPress={handleLogin}>
                 Entrar
               </Link>
 
-              <Link href="/register" className="self-end color-blue-600">Não tem um cadastro? cadastre-se.</Link>
+              <Link href="/register" className="self-end color-blue-600" onPress={() => setMsgInputEmpty("")}>Não tem um cadastro? cadastre-se.</Link>
         </View> 
      </KeyboardAvoidingView> 
     </>
@@ -75,8 +96,8 @@ const styles = {
   containerHeader: `px-[20px] pt-[40px]`,
   subTitleOne: `text-[19px] color-[#00BFFF]`,
   subTiTleTwo: `color-[#87CEFA] text-[17px] me-[5px]`,
-  textInput: `border-b-[1px] border-[#4F4F4F] mb-[30px]`,
+  textInput: `border-b-[1px] border-[#4F4F4F]`,
   textInputPassword: `flex-1`,
-  button: `bg-[#000] mb-[20px] justify-center items-center py-[10px] rounded rounded-lg color-[#fff] text-center text-[18px]`,
-  containerInputPassword: `flex-row border-b-[1px] border-[#4F4F4F] mb-[30px] items-center`
+  button: `bg-[#000] mb-[20px] justify-center items-center py-[10px] rounded rounded-lg color-[#fff] text-center text-[18px] mt-[30px]`,
+  containerInputPassword: `flex-row border-b-[1px] border-[#4F4F4F] items-center`
 }

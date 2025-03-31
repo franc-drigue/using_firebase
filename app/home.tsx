@@ -36,6 +36,7 @@ export default function Home() {
   const [users, setUsers] = useState<userType[]>([]);
   const [msgAlert, setMsgAlert] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+ 
 
 
    const fetchUser = async () => {
