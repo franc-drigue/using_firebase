@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { 
   TouchableOpacity, 
   Text, 
@@ -7,35 +7,63 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { db, auth } from "firebaseConfig";
-import {signInWithEmailAndPassword} from "firebase/auth";
-import {Link} from "expo-router";
+import { auth } from "firebaseConfig";
+import {signInWithEmailAndPassword, onAuthStateChanged, AuthErrorCodes} from "firebase/auth";
+import { useRouter } from "expo-router";
 import { StatusBar } from "react-native";
 import {MaterialIcons} from "@expo/vector-icons";
+import Toast from "~/components/Toast";
 
 
 export default function Login() {
+
+  const router = useRouter();
 
   const [isShowPassword, setIsShowPassword] = useState(true);
   const [msgInputEmpty, setMsgInputEmpty] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [msgToast, setMsgToast] = useState("");
+
 
   const handleShowPassword = () => {
     setIsShowPassword(!isShowPassword);
   }
 
-  const handleLogin = () => {
-    if(email == "" || password == "") {
-      setMsgInputEmpty("Preencha o campo");
-      return
+  const handleLogin =  () => {
+    if (email.trim() === "" || password.trim() === "") {
+      setMsgInputEmpty("Preencha todos os campos");
+      return;
     }
 
     signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      console.log(userCredential);
-    })
+      .then((user) => {
+        if(user.user) {
+          router.replace("/home")
+        }
+      })
+      .catch((error) => {
+          console.log(error)
+          if(error.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS) {
+            setMsgToast("Credenciais inválidas")
+          }
+          else if(error.code == AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER) {
+            setMsgToast("Muitas tentativas, tente mais tarde!")
+          }
+      })
   }
+
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.replace("/home");
+      }
+    });
+
+    return () => unsubscribe(); 
+  }, []);
+
 
   return (
     <>
@@ -78,11 +106,21 @@ export default function Login() {
               </TouchableOpacity>
             </View>
             <Text style={{display: `${password.length != 0 ? "none" : msgInputEmpty == "" ? "none" : "flex" }`, color: "#FF0000"}}>{msgInputEmpty}</Text>
-              <Link href="/" className={styles.button} onPress={handleLogin}>
-                Entrar
-              </Link>
+              <TouchableOpacity className={styles.button} onPress={handleLogin}>
+                 <Text className={styles.textButton}>Entrar</Text>
+              </TouchableOpacity>
 
-              <Link href="/register" className="self-end color-blue-600" onPress={() => setMsgInputEmpty("")}>Não tem um cadastro? cadastre-se.</Link>
+              <TouchableOpacity 
+                onPress={() => {
+                   setMsgInputEmpty("")
+                   router.replace("/register")
+                 }
+                }
+                >
+                  <Text className="self-end color-blue-600" >Não tem um cadastro? cadastre-se.</Text>
+              </TouchableOpacity>
+              
+              <Toast msgToast={msgToast} clearMsgToast={setMsgToast}/>
         </View> 
      </KeyboardAvoidingView> 
     </>
@@ -99,5 +137,6 @@ const styles = {
   textInput: `border-b-[1px] border-[#4F4F4F]`,
   textInputPassword: `flex-1`,
   button: `bg-[#000] mb-[20px] justify-center items-center py-[10px] rounded rounded-lg color-[#fff] text-center text-[18px] mt-[30px]`,
-  containerInputPassword: `flex-row border-b-[1px] border-[#4F4F4F] items-center`
+  containerInputPassword: `flex-row border-b-[1px] border-[#4F4F4F] items-center`,
+  textButton: `text-[#fff] text-[18px]`,
 }

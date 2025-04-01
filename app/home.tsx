@@ -18,7 +18,10 @@ import {
   onSnapshot
 } from "firebase/firestore";
 import CardUsers from "~/components/CardUsers";
-import { db } from "firebaseConfig";
+import { db, auth } from "firebaseConfig";
+import {router} from "expo-router"
+import {signOut} from "firebase/auth"
+import {MaterialIcons} from "@expo/vector-icons"
 
  type userType = {
   id: string;
@@ -133,11 +136,26 @@ export default function Home() {
     fetchUser();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.replace("/"); 
+    } catch (error) {
+      console.error("Erro ao fazer logout:");
+    }
+  }
 
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="#fff"  />
       <View className={styles.container}>
+          <TouchableOpacity className="mb-2 flex-row items-center gap-2" onPress={handleLogout}>
+             <MaterialIcons name="logout" size={29}/>
+             <Text className="text-[18px]">Sair</Text>
+          </TouchableOpacity>
+          <View className="bg-black h-[0.9px] mb-5">
+             <Text></Text>
+          </View>
         {
          isToggleForm && 
          <View>

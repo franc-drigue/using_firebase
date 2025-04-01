@@ -7,7 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { auth} from "firebaseConfig";
+import {auth} from "firebaseConfig";
 import {AuthErrorCodes, createUserWithEmailAndPassword} from "firebase/auth"
 import {router} from "expo-router"
 import {StatusBar} from "react-native";
@@ -44,6 +44,8 @@ export default function Register() {
      .catch((err) => {
       if(err.code == AuthErrorCodes.EMAIL_EXISTS){
         setMsgToast("E-mail já existe");
+      }else if (err.code === AuthErrorCodes.WEAK_PASSWORD) {
+        setMsgToast("A senha precisa ter no mínimo 6 dígitos");
       }
     })
   }
@@ -97,7 +99,7 @@ export default function Register() {
                <TouchableOpacity 
                  className="flex-row items-center gap-1 mt-7" 
                  onPress={() => {
-                  router.push("/");
+                  router.replace("/");
                   setEmail("");
                   setPassword("");
                   setMsgInputEmpty("")
