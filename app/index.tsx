@@ -44,11 +44,16 @@ export default function Login() {
       })
       .catch((error) => {
           console.log(error)
-          if(error.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS) {
-            setMsgToast("Credenciais inválidas")
-          }
-          else if(error.code == AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER) {
-            setMsgToast("Muitas tentativas, tente mais tarde!")
+          switch(error.code){
+            case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
+              setMsgToast("Credenciais inválidas");  
+              break
+            case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
+              setMsgToast("Muitas tentativas, tente mais tarde!")
+              break;
+            case AuthErrorCodes.INVALID_EMAIL:
+              setMsgToast("E-mail Inválido");
+              break;     
           }
       })
   }

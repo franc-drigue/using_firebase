@@ -42,10 +42,18 @@ export default function Register() {
         setMsgToast("Usuário cadastrado com sucesso");
      })
      .catch((err) => {
-      if(err.code == AuthErrorCodes.EMAIL_EXISTS){
-        setMsgToast("E-mail já existe");
-      }else if (err.code === AuthErrorCodes.WEAK_PASSWORD) {
-        setMsgToast("A senha precisa ter no mínimo 6 dígitos");
+      console.log(err)
+
+      switch(err.code) {
+         case AuthErrorCodes.EMAIL_EXISTS: 
+           setMsgToast("E-mail já existe");
+           break;
+         case AuthErrorCodes.WEAK_PASSWORD:
+           setMsgToast("A senha precisa ter no mínimo 6 dígitos");
+           break;
+         case AuthErrorCodes.INVALID_EMAIL:
+           setMsgToast("E-mail Inválido");
+           break; 
       }
     })
   }
